@@ -1,0 +1,617 @@
+/* Halaman full-layar gaya "live" (TikTok-like): panggung Aiko nutupin
+   seluruh layar, semua kontrol (topbar, chat, FAB) melayang di atasnya
+   pakai overlay/scrim, bukan dibagi jadi panel kiri-kanan kayak sebelumnya. */
+
+.page {
+  position: fixed;
+  inset: 0;
+  /* PENTING: urutan di bawah ini harus vh dulu baru dvh, BUKAN
+     sebaliknya — deklarasi yang belakangan menang di CSS. Versi
+     sebelumnya (dvh dulu, vh belakangan) bikin dvh-nya nggak pernah
+     kepake sama sekali; hasilnya .page ikut tinggi "large viewport"
+     (seolah address bar disembunyiin), jadi begitu address bar Chrome
+     kelihatan (browser chrome makan tempat), input chat & FAB yang
+     nempel di bawah ke-geser ke luar layar — makanya kotak chat sempet
+     "ilang". vh di sini murni fallback buat browser lawas yang belum
+     kenal dvh; dvh yang beneran dipakai di browser modern. */
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+}
+
+/* Di layar lebar (tablet/desktop), jangan biarin panggung Aiko melar
+   selebar-lebarnya — bikin panel vertikal terpusat kayak nonton live
+   TikTok di web, dengan area gelap ("letterbox") di kiri-kanan. Semua
+   overlay anak (topbar/chat/FAB/toast) ikut ke-scope ke lebar panel ini
+   juga karena posisinya position:absolute relatif ke .page. */
+@media (min-width: 720px) {
+  .page {
+    left: 50%;
+    right: auto;
+    width: min(480px, 100vw);
+    transform: translateX(-50%);
+    box-shadow: 0 0 80px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* ---------- Background & panggung ---------- */
+
+.bgImage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.bgImage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.05) 30%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+.snowfall {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.flake {
+  position: absolute;
+  top: -10px;
+  left: calc(var(--i) * 7.2%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(127, 179, 245, 0.55);
+  opacity: 0.7;
+  animation: fall 9s linear infinite;
+  animation-delay: calc(var(--i) * -0.6s);
+}
+
+.flake:nth-child(odd) {
+  width: 3px;
+  height: 3px;
+  background: rgba(242, 242, 240, 0.4);
+  animation-duration: 12s;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-10px) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) translateX(18px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flake {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+.canvasWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ---------- Topbar overlay ---------- */
+
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: max(14px, env(safe-area-inset-top)) 16px 44px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent);
+  pointer-events: none;
+}
+
+.topbar > * {
+  pointer-events: auto;
+}
+
+.topbarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modelCredit {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.topbarTitle {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--chip-blue);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.topbarSpacer {
+  flex: 1;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.85);
+  /* Sengaja tanpa backdrop-filter: blur real-time di atas kanvas WebGL
+     yang render tiap frame itu salah satu penyebab utama FPS drop yang
+     dilaporkan (browser harus nge-resample area di baliknya tiap frame).
+     Diganti background solid lebih pekat biar tetep kebaca. */
+  background: rgba(18, 18, 20, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-full);
+  padding: 6px 12px;
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.statusDot[data-state="ready"] {
+  background: var(--accent);
+}
+
+.statusDot[data-state="talk"] {
+  background: var(--chip-blue);
+  animation: pulse 0.9s ease-in-out infinite;
+}
+
+.topbarLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconLinkButton {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(18, 18, 20, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-full);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+.iconLinkButton:hover {
+  transform: translateY(-2px);
+  background: rgba(28, 28, 32, 0.85);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.6;
+  }
+}
+
+/* ---------- Chat mengambang, gaya live comment ---------- */
+
+.chatOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 60px 16px calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.32) 45%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.messages {
+  pointer-events: auto;
+  /* Sengaja jauh lebih pendek drpd sebelumnya (dulu 40vh) — riwayat chat
+     yang kepanjangan bikin box-nya melar ke atas sampe numpuk di
+     dada/tangan karakter (kelihatan kayak "bug" nempel di badan Aiko,
+     padahal itu bubble chat lama yang ke-dorong naik). Live comment ala
+     TikTok emang seharusnya cuma nampilin beberapa baris paling baru. */
+  max-height: 26vh;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  /* Baris paling atas (yang mau ke-scroll keluar) memudar dulu alih-alih
+     kepotong tegas atau nongol solid nimpa karakter di belakangnya. */
+  mask-image: linear-gradient(to bottom, transparent, black 22px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 22px);
+}
+
+.bubble {
+  align-self: flex-start;
+  max-width: 82%;
+  padding: 9px 13px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #fff;
+  /* Bubble bisa banyak sekaligus di layar — kalau tiap satu pakai
+     backdrop-filter, itu N kali blur real-time per frame di atas kanvas
+     WebGL. Salah satu penyumbang FPS drop paling besar, makanya dicabut
+     dan diganti background lebih pekat (nggak sebening sebelumnya, tapi
+     tetep kebaca jelas). */
+  background: rgba(15, 15, 17, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  border-bottom-left-radius: 4px;
+  white-space: pre-wrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.bubble[data-role="user"] {
+  align-self: flex-end;
+  background: rgba(125, 211, 176, 0.28);
+  border-color: rgba(125, 211, 176, 0.35);
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: 4px;
+}
+
+/* Pesan otomatis (bukan balasan API) dari mood engine — dibedain dikit
+   biar kerasa kayak "reaksi", bukan jawaban obrolan biasa. Backgroundnya
+   dulu 0.08 (nyaris transparan) — kebaca kalau di atas scrim gelap, tapi
+   jadi ghost/nyaris nggak kebaca pas nimpa gaun putih Aiko. Dinaikin ke
+   level yang mirip bubble biasa, tetep beda gaya (pill + italic). */
+.bubble[data-auto="true"] {
+  align-self: center;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: #fff;
+  background: rgba(15, 15, 17, 0.7);
+  border-color: rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-full);
+  padding: 7px 14px;
+}
+
+.caret {
+  display: inline-block;
+  width: 6px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: middle;
+  background: rgba(255, 255, 255, 0.7);
+  animation: blink 0.9s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.inputRow {
+  pointer-events: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: #fff;
+  background: rgba(24, 24, 26, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-full);
+  padding: 11px 16px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.input:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.sendButton {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.sendButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- FAB ekspresi ---------- */
+
+.fabWrap {
+  position: absolute;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.fabMain {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  box-shadow: var(--shadow-lift);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.fabMain:hover {
+  transform: scale(1.05);
+}
+
+.fabPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(84vw, 320px);
+  /* Daftar ekspresinya sekarang lengkap (20 item, dikelompokkan) —
+     panelnya jauh lebih tinggi drpd sebelumnya, jadi max-height dinaikin
+     + tetep overflow-y:auto biar scrollable di layar pendek. */
+  max-height: 72vh;
+  overflow-y: auto;
+  padding: 12px;
+  background: rgba(16, 16, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lift);
+  animation: fabPop 0.18s var(--ease-out);
+  transform-origin: bottom right;
+}
+
+@keyframes fabPop {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fabPanel {
+    animation: none;
+  }
+}
+
+.fabAction {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.fabAction:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.fabAction[data-active="true"] {
+  background: rgba(242, 163, 196, 0.35);
+  border-color: rgba(242, 163, 196, 0.5);
+}
+
+.fabGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.fabSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.fabSectionTitle {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.fabChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.fabChip i {
+  font-size: 0.95rem;
+  color: var(--chip-blue);
+}
+
+.fabChip:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ---------- Toast notifikasi ---------- */
+
+.toast {
+  position: absolute; /* relatif ke .page biar ikut ke-frame di desktop, bukan ke viewport penuh */
+  z-index: 200;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: min(90vw, 380px);
+  padding: 14px 16px;
+  color: #fff;
+  background: rgba(20, 20, 22, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lift);
+  animation: toastIn 0.28s var(--ease-out);
+}
+
+.toastIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 1rem;
+  color: var(--chip-pink);
+}
+
+.toastBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.toastTitle {
+  margin: 0 0 2px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.86rem;
+  color: #fff;
+}
+
+.toastMessage {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.toastClose {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.toastClose:hover {
+  color: #fff;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}

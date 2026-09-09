@@ -1,0 +1,28 @@
+{
+  "name": "aiko-live2d-companion",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_OPTIONS='--max-old-space-size=1024' next dev",
+    "dev:webpack": "NODE_OPTIONS='--max-old-space-size=1024' next dev --no-turbopack",
+    "build": "NODE_OPTIONS='--max-old-space-size=1536' next build",
+    "build:webpack": "NODE_OPTIONS='--max-old-space-size=1536' next build --no-turbopack",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "@upstash/redis": "^1.34.3",
+    "framer-motion": "^12",
+    "next": "16.2.2",
+    "pixi-live2d-display": "^0.4.0",
+    "pixi.js": "^6.5.10",
+    "@pixi/unsafe-eval": "^6.5.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.2.2"
+  }
+}

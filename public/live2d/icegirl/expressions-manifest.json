@@ -1,0 +1,82 @@
+[
+  {
+    "name": "mouth_wry_left",
+    "label": "Mulut Miring Kiri"
+  },
+  {
+    "name": "mouth_wry_right",
+    "label": "Mulut Miring Kanan"
+  },
+  {
+    "name": "surprised",
+    "label": "Kaget"
+  },
+  {
+    "name": "blush",
+    "label": "Malu-malu"
+  },
+  {
+    "name": "dark_face",
+    "label": "Kesel Berat"
+  },
+  {
+    "name": "confused",
+    "label": "Bingung"
+  },
+  {
+    "name": "angry",
+    "label": "Marah"
+  },
+  {
+    "name": "love_eyes",
+    "label": "Mata Hati"
+  },
+  {
+    "name": "star_eyes",
+    "label": "Mata Bintang"
+  },
+  {
+    "name": "money_eyes",
+    "label": "Mata Duit"
+  },
+  {
+    "name": "eye_roll",
+    "label": "Melotot Males"
+  },
+  {
+    "name": "crying",
+    "label": "Nangis"
+  },
+  {
+    "name": "hair_down",
+    "label": "Rambut Terurai"
+  },
+  {
+    "name": "ponytail",
+    "label": "Kuncir Kuda"
+  },
+  {
+    "name": "crown",
+    "label": "Mahkota"
+  },
+  {
+    "name": "ice_wings",
+    "label": "Sayap Es"
+  },
+  {
+    "name": "tongue_out",
+    "label": "Lidah Melet"
+  },
+  {
+    "name": "cat_ears",
+    "label": "Telinga Kucing"
+  },
+  {
+    "name": "mic_prop",
+    "label": "Mic/Prop"
+  },
+  {
+    "name": "live_outfit",
+    "label": "Outfit Live"
+  }
+]

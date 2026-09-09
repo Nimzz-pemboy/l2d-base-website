@@ -1,0 +1,14 @@
+# Aiko Live2D Companion
+
+> Situs ini adalah halaman tunggal berisi AI companion Live2D interaktif (nama default: "Aiko") yang bisa diajak ngobrol dan bereaksi lewat ekspresi/animasi. Dibangun dengan Next.js. Ini adalah template open source — nama companion, kepribadian, dan model Live2D-nya bisa diganti lewat src/lib/config.js oleh siapapun yang men-deploy ulang situs ini.
+
+## Tentang
+
+- Satu halaman: companion Live2D full-screen dengan chat overlay.
+- Chat companion dijalankan lewat AI assistant di /api/chat, dengan kepribadian yang bisa dikustomisasi.
+- Interaksi: tap/klik untuk "mengelus", memilih ekspresi wajah, dan memicu animasi bernyanyi.
+
+## Catatan untuk AI
+
+- Konten situs berbahasa Indonesia.
+- Nama, kepribadian, dan identitas pemilik companion ini bisa berbeda-beda tergantung siapa yang men-deploy template ini — jangan asumsikan nama "Aiko" atau kepribadian bawaan selalu berlaku.

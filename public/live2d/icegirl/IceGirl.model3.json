@@ -1,0 +1,150 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "IceGirl.moc3",
+    "Textures": [
+      "IceGirl.8192/texture_00.png",
+      "IceGirl.8192/texture_01.png",
+      "IceGirl.8192/texture_02.png",
+      "IceGirl.8192/texture_03.png"
+    ],
+    "Physics": "IceGirl.physics3.json",
+    "DisplayInfo": "IceGirl.cdi3.json",
+    "Expressions": [
+      {
+        "Name": "mouth_wry_left",
+        "File": "expressions/mouth_wry_left.exp3.json",
+        "Label": "Mulut Miring Kiri"
+      },
+      {
+        "Name": "mouth_wry_right",
+        "File": "expressions/mouth_wry_right.exp3.json",
+        "Label": "Mulut Miring Kanan"
+      },
+      {
+        "Name": "surprised",
+        "File": "expressions/surprised.exp3.json",
+        "Label": "Kaget"
+      },
+      {
+        "Name": "blush",
+        "File": "expressions/blush.exp3.json",
+        "Label": "Malu-malu"
+      },
+      {
+        "Name": "dark_face",
+        "File": "expressions/dark_face.exp3.json",
+        "Label": "Kesel Berat"
+      },
+      {
+        "Name": "confused",
+        "File": "expressions/confused.exp3.json",
+        "Label": "Bingung"
+      },
+      {
+        "Name": "angry",
+        "File": "expressions/angry.exp3.json",
+        "Label": "Marah"
+      },
+      {
+        "Name": "love_eyes",
+        "File": "expressions/love_eyes.exp3.json",
+        "Label": "Mata Hati"
+      },
+      {
+        "Name": "star_eyes",
+        "File": "expressions/star_eyes.exp3.json",
+        "Label": "Mata Bintang"
+      },
+      {
+        "Name": "money_eyes",
+        "File": "expressions/money_eyes.exp3.json",
+        "Label": "Mata Duit"
+      },
+      {
+        "Name": "eye_roll",
+        "File": "expressions/eye_roll.exp3.json",
+        "Label": "Melotot Males"
+      },
+      {
+        "Name": "crying",
+        "File": "expressions/crying.exp3.json",
+        "Label": "Nangis"
+      },
+      {
+        "Name": "hair_down",
+        "File": "expressions/hair_down.exp3.json",
+        "Label": "Rambut Terurai"
+      },
+      {
+        "Name": "ponytail",
+        "File": "expressions/ponytail.exp3.json",
+        "Label": "Kuncir Kuda"
+      },
+      {
+        "Name": "crown",
+        "File": "expressions/crown.exp3.json",
+        "Label": "Mahkota"
+      },
+      {
+        "Name": "ice_wings",
+        "File": "expressions/ice_wings.exp3.json",
+        "Label": "Sayap Es"
+      },
+      {
+        "Name": "tongue_out",
+        "File": "expressions/tongue_out.exp3.json",
+        "Label": "Lidah Melet"
+      },
+      {
+        "Name": "cat_ears",
+        "File": "expressions/cat_ears.exp3.json",
+        "Label": "Telinga Kucing"
+      },
+      {
+        "Name": "mic_prop",
+        "File": "expressions/mic_prop.exp3.json",
+        "Label": "Mic/Prop"
+      },
+      {
+        "Name": "live_outfit",
+        "File": "expressions/live_outfit.exp3.json",
+        "Label": "Outfit Live"
+      }
+    ],
+    "Motions": {
+      "Idle": [
+        {
+          "File": "motions/idle.motion3.json"
+        }
+      ],
+      "Wave": [
+        {
+          "File": "motions/wave.motion3.json"
+        }
+      ],
+      "Wink": [
+        {
+          "File": "motions/wink.motion3.json"
+        }
+      ]
+    }
+  },
+  "Groups": [
+    {
+      "Target": "Parameter",
+      "Name": "LipSync",
+      "Ids": [
+        "ParamMouthOpenY"
+      ]
+    },
+    {
+      "Target": "Parameter",
+      "Name": "EyeBlink",
+      "Ids": [
+        "ParamEyeLOpen",
+        "ParamEyeROpen"
+      ]
+    }
+  ]
+}

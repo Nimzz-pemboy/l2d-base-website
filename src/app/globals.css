@@ -1,0 +1,226 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap");
+
+/* Template ini sengaja cuma punya SATU tema (dark) — halaman companion-nya
+   emang dirancang selalu gelap/malam, jadi nggak ada toggle light/dark
+   kayak versi portfolio aslinya. Kalau kamu mau nambah light mode lagi,
+   tinggal tambah blok :root[data-theme="light"] { ... } di sini. */
+:root {
+  --bg-primary-rgb: 10, 11, 13;
+  --bg-primary: #0a0b0d;
+  --bg-secondary: #121316;
+  --bg-tertiary: #1a1c20;
+  --bg-card: #16171a;
+  --bg-card-hover: #1c1e22;
+
+  --text-primary: #f2f2f0;
+  --text-secondary: #a3a29c;
+  --text-tertiary: #6b6a65;
+
+  --accent: #7dd3b0;
+  --accent-hover: #93ddc0;
+  --accent-dim: rgba(125, 211, 176, 0.12);
+  --accent-rgb: 125, 211, 176;
+  --accent-ink: #0a0b0d;
+
+  --chip-blue: #7fb3f5;
+  --chip-pink: #f2a3c4;
+  --chip-green: #7dd3b0;
+  --chip-purple: #b8a3f5;
+  --chip-orange: #f5b98a;
+
+  --border: rgba(242, 242, 240, 0.1);
+  --border-hover: rgba(125, 211, 176, 0.4);
+  --border-width: 1px;
+  --shadow-offset: 0px;
+  --shadow-color: rgba(0, 0, 0, 0.35);
+
+  --overlay-rgb: 255, 255, 255;
+  --overlay-02: rgba(255, 255, 255, 0.02);
+  --overlay-03: rgba(255, 255, 255, 0.03);
+  --overlay-04: rgba(255, 255, 255, 0.04);
+  --overlay-05: rgba(255, 255, 255, 0.05);
+  --overlay-06: rgba(255, 255, 255, 0.06);
+  --overlay-07: rgba(255, 255, 255, 0.07);
+  --overlay-08: rgba(255, 255, 255, 0.08);
+  --overlay-strong: rgba(255, 255, 255, 0.25);
+
+  --scrim-soft: rgba(0, 0, 0, 0.5);
+  --scrim-strong: rgba(0, 0, 0, 0.7);
+
+  --grain-opacity: 0.02;
+  --grid-opacity: 0.035;
+
+  --font-heading: "Space Grotesk", "Inter", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --max-width: 1920px;
+
+  --ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 0.2s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.6s;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 999px;
+
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.24), 0 8px 24px -8px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 4px 12px rgba(0, 0, 0, 0.28), 0 16px 40px -12px rgba(0, 0, 0, 0.45);
+  --shadow-focus: 0 0 0 3px var(--accent-dim);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+  touch-action: manipulation;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) var(--bg-primary);
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100svh;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  z-index: 9000;
+  animation: grain 0.8s steps(1) infinite;
+}
+
+@keyframes grain {
+  0%,
+  100% {
+    background-position: 0 0;
+  }
+  10% {
+    background-position: -5% -10%;
+  }
+  20% {
+    background-position: -15% 5%;
+  }
+  30% {
+    background-position: 7% -25%;
+  }
+  40% {
+    background-position: 20% 25%;
+  }
+  50% {
+    background-position: -25% 10%;
+  }
+  60% {
+    background-position: 15% 5%;
+  }
+  70% {
+    background-position: 0% 15%;
+  }
+  80% {
+    background-position: 25% 35%;
+  }
+  90% {
+    background-position: -10% 10%;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 64px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    padding: 0 80px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--text-primary);
+}
