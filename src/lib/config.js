@@ -4,7 +4,7 @@
 const config = {
   // Ganti ke domain kamu sendiri kalau sudah deploy (dipakai buat metadata
   // SEO/OG image & sitemap.xml).
-  siteUrl: "https://example.com",
+  siteUrl: "https://l2d-base-website.vercel.app/⁠",
 
   // Nama kamu sebagai pembuat/pemilik situs ini — dipakai di system prompt
   // AI companion (misal buat jawab "siapa yang bikin kamu?").
