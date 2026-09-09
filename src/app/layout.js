@@ -16,8 +16,8 @@ export const metadata = {
     images: [
       {
         url: "/og-image.png",
-        width: 1200,
-        height: 630,
+        width: 736,
+        height: 739,
         alt: `Pratinjau ${config.companion.name}`,
       },
     ],
